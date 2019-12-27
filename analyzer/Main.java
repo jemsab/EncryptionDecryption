@@ -1,52 +1,37 @@
 package analyzer;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Main {
+
+    private static PatternAlgorithm patternAlgorithm;
+
     public static void main(String[] args) {
 
-        int debugCounter = 0;
+        switch(args[0]){
+            case "--naive":
+                patternAlgorithm = new Naive();
+                break;
+            case "--KMP":
+                patternAlgorithm = new KMP();
+                break;
+            default :
+                patternAlgorithm = new Naive();
+                break;
+        }
 
         final String fileName = args[0];
-        final String patternString = args[1];
-        final String resultString = args[2];
+        final String pattern = args[1];
+        final String result = args[2];
 
-        byte[] patternByteArray = patternString.getBytes();
+        boolean fileContainsPattern = patternAlgorithm.matchFileType(fileName, pattern);
 
-
-        try(InputStream is = new FileInputStream(fileName)){
-
-            byte[] fileBytes = Files.readAllBytes(Paths.get(fileName));
-
-            boolean isDocumentFormat = true;
-
-            for(int i = 0; i < fileBytes.length; i++){
-
-                if (i < (fileBytes.length - patternByteArray.length)){
-                    for(int j = 0; j < patternByteArray.length; j++){
-                        if(! (fileBytes[i + j] == patternByteArray[j])){
-                            isDocumentFormat = false;
-                        } else {
-                            isDocumentFormat = true;
-                        }
-                    }
-
-                }
-                if(isDocumentFormat){
-                    System.out.println(resultString);
-                    break;
-                }
-
-            }
-
-            if (! isDocumentFormat)
-                System.out.println("Unknown file type");
-        }catch(IOException ex) {
-            System.out.println(ex.getMessage());
-        }
+        if (fileContainsPattern)
+            System.out.println(result);
+        else
+            System.out.println("Unknown file type");
 
 
 
