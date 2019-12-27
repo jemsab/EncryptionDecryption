@@ -1,1 +1,1 @@
-# EncryptionDecryption
+# File Type Analyzer
